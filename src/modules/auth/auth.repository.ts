@@ -39,4 +39,26 @@ export const authRepository = {
 
     return createUserOutputSchema.parse(result.rows[0]);
   },
+
+  findUserById: async (id: string): Promise<CreateUserOutput | null> => {
+    const result = await pool.query("SELECT id, name, email, created_at FROM users WHERE id = $1", [
+      id,
+    ]);
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return createUserOutputSchema.parse(result.rows[0]);
+  },
+
+  findUserByEmailWithPassword: async (
+    email: string
+  ): Promise<{ id: string; email: string; password_hash: string } | null> => {
+    const result = await pool.query("SELECT id, email, password_hash FROM users WHERE email = $1", [
+      email,
+    ]);
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return result.rows[0];
+  },
 };
