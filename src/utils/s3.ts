@@ -1,6 +1,12 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  GetObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "../config/env";
 import { randomUUID } from "node:crypto";
+import { buffer } from "node:stream/consumers";
 
 export const s3Client = new S3Client({
   region: env.AWS_REGION,
@@ -36,8 +42,31 @@ export const s3Service = {
       return uniqueKey;
     } catch (error) {
       throw new Error(
-        `Failed to upload to S3: ${error instanceof Error ? error.message : "Unknown error"}`
+        `Failed to upload to S3: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
+  },
+  getFromS3: async (key: string) => {
+    const command = new GetObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+    });
+
+    try {
+      const response = await s3Client.send(command);
+      const buffer = await response.Body?.transformToByteArray();
+      return buffer;
+    } catch (error) {
+      throw new Error(
+        `Failed to get from S3: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
+  },
+  getPresignedUrl: async (key: string): Promise<string> => {
+    const command = new GetObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+    });
+    return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
   },
 };
