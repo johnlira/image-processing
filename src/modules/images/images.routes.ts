@@ -24,5 +24,6 @@ imagesRoutes.post(
   imagesControllers.uploadImages,
 );
 imagesRoutes.get("/", authenticated, imagesControllers.getUserImages);
+imagesRoutes.get("/:id", authenticated, imagesControllers.getImageById);
 
 export default imagesRoutes;

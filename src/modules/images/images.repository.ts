@@ -45,11 +45,15 @@ export const imagesRepository = {
     }
 
     return imageOutputSchema.parse({
-      ...result.rows[0],
+      id: result.rows[0].id,
+      userId: result.rows[0].user_id,
+      originalName: result.rows[0].original_name,
+      storageKey: result.rows[0].storage_key,
+      mimeType: result.rows[0].mime_type,
+      size: result.rows[0].size,
       dimensions:
-        typeof result.rows[0].dimensions === "string"
-          ? JSON.parse(result.rows[0].dimensions)
-          : result.rows[0].dimensions,
+        typeof result.rows[0].dimensions === "string" ? JSON.parse(result.rows[0].dimensions) : result.rows[0].dimensions,
+      createdAt: result.rows[0].created_at,
     });
   },
 
@@ -72,5 +76,28 @@ export const imagesRepository = {
         createdAt: row.created_at,
       })
     );
+  },
+
+  findByUserIdAndStorageKey: async (userId: string, storageKey: string): Promise<ImageOutput | null> => {
+    const result = await pool.query(
+      "SELECT id, user_id, original_name, storage_key, mime_type, size, dimensions, created_at FROM images WHERE user_id = $1 AND storage_key = $2",
+      [userId, storageKey]
+    );
+
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return imageOutputSchema.parse({
+      id: result.rows[0].id,
+      userId: result.rows[0].user_id,
+      originalName: result.rows[0].original_name,
+      storageKey: result.rows[0].storage_key,
+      mimeType: result.rows[0].mime_type,
+      size: result.rows[0].size,
+      dimensions:
+        typeof result.rows[0].dimensions === "string" ? JSON.parse(result.rows[0].dimensions) : result.rows[0].dimensions,
+      createdAt: result.rows[0].created_at,
+    });
   },
 };

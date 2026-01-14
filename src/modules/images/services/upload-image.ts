@@ -2,6 +2,7 @@ import sharp from "sharp";
 import { s3Service } from "../../../utils/s3";
 import AppError from "../../../errors/app-errors";
 import { imagesRepository } from "../images.repository";
+import type { ImageOutput } from "../images.schemas";
 
 interface UploadImageParams {
   file: Express.Multer.File;
@@ -14,14 +15,7 @@ interface ImageMetadata {
   format: string;
 }
 
-interface UploadImageResult {
-  storageKey: string;
-  originalName: string;
-  mimeType: string;
-  size: number;
-  dimensions: ImageMetadata;
-}
-export const uploadImage = async (params: UploadImageParams) => {
+export const uploadImage = async (params: UploadImageParams): Promise<ImageOutput> => {
   let metadata: ImageMetadata;
   let processedBuffer: Buffer;
 
@@ -66,5 +60,7 @@ export const uploadImage = async (params: UploadImageParams) => {
     dimensions: metadata,
   });
 
-  return image;
+  const url = await s3Service.getPresignedUrl(image.storageKey);
+
+  return { ...image, url };
 };
