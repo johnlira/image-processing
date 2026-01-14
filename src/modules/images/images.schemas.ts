@@ -18,14 +18,15 @@ export const createImageInputSchema = z.object({
 export type CreateImageInput = z.infer<typeof createImageInputSchema>;
 
 export const imageOutputSchema = z.object({
-  id: z.uuid(),
-  user_id: z.uuid(),
-  original_name: z.string(),
-  storage_key: z.string(),
-  mime_type: z.string(),
+  id: z.string(),
+  userId: z.string(),
+  originalName: z.string(),
+  storageKey: z.string(),
+  mimeType: z.string(),
   size: z.number(),
   dimensions: imageDimensionsSchema,
-  created_at: z.coerce.date(),
+  createdAt: z.date(),
+  url: z.string().optional(),
 });
 
 export type ImageOutput = z.infer<typeof imageOutputSchema>;

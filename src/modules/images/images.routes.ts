@@ -12,10 +12,17 @@ imagesRoutes.post(
   authenticated,
   upload.single("image"),
   validateFile({
-    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/jpg"],
+    allowedMimeTypes: [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+      "image/jpg",
+    ],
     maxFileSize: 10 * 1024 * 1024, // 10MB
   }),
-  imagesControllers.uploadImages
+  imagesControllers.uploadImages,
 );
+imagesRoutes.get("/", authenticated, imagesControllers.getUserImages);
 
 export default imagesRoutes;

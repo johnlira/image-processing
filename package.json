@@ -12,6 +12,7 @@
   "packageManager": "pnpm@10.27.0",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.966.0",
+    "@aws-sdk/s3-request-presigner": "^3.968.0",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.3",
     "bcryptjs": "^3.0.3",

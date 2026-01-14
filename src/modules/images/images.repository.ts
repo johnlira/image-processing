@@ -18,11 +18,17 @@ export const imagesRepository = {
     }
 
     const image = imageOutputSchema.parse({
-      ...result.rows[0],
+      id: result.rows[0].id,
+      userId: result.rows[0].user_id,
+      originalName: result.rows[0].original_name,
+      storageKey: result.rows[0].storage_key,
+      mimeType: result.rows[0].mime_type,
+      size: result.rows[0].size,
       dimensions:
         typeof result.rows[0].dimensions === "string"
           ? JSON.parse(result.rows[0].dimensions)
           : result.rows[0].dimensions,
+      createdAt: result.rows[0].created_at,
     });
 
     return image;
@@ -55,9 +61,15 @@ export const imagesRepository = {
 
     return result.rows.map((row) =>
       imageOutputSchema.parse({
-        ...row,
+        id: row.id,
+        userId: row.user_id,
+        originalName: row.original_name,
+        storageKey: row.storage_key,
+        mimeType: row.mime_type,
+        size: row.size,
         dimensions:
           typeof row.dimensions === "string" ? JSON.parse(row.dimensions) : row.dimensions,
+        createdAt: row.created_at,
       })
     );
   },

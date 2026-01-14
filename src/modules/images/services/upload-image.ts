@@ -44,7 +44,10 @@ export const uploadImage = async (params: UploadImageParams) => {
     if (error instanceof AppError) {
       throw error;
     }
-    throw new AppError("Failed to process image. File may be corrupted or invalid.", 400);
+    throw new AppError(
+      "Failed to process image. File may be corrupted or invalid.",
+      400,
+    );
   }
 
   const storageKey = await s3Service.uploadToS3({

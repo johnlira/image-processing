@@ -13,7 +13,9 @@ const pinoLogger = pino({
   },
 });
 
-export const logger = pinoHttp({
+export const logger = pinoLogger;
+
+const httpLogger = pinoHttp({
   logger: pinoLogger,
   customLogLevel: (req, res, err) => {
     if (err) return "error";
@@ -27,4 +29,4 @@ export const logger = pinoHttp({
     `${req.method} ${req.url} ${res.statusCode || 500} - ${err.message}`,
 });
 
-export default logger;
+export { httpLogger as default };
