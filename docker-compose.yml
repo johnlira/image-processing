@@ -10,7 +10,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
@@ -23,7 +22,6 @@ services:
     environment:
       SERVICES: s3
       DEBUG: 1
-      DATA_DIR: /var/lib/localstack
       DOCKER_HOST: unix:///var/run/docker.sock
     ports:
       - "4566:4566"
@@ -34,6 +32,3 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-
-volumes:
-  postgres_data:
