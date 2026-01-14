@@ -100,4 +100,13 @@ export const imagesRepository = {
       createdAt: result.rows[0].created_at,
     });
   },
+
+  delete: async (id: string, userId: string): Promise<boolean> => {
+    const result = await pool.query(
+      "DELETE FROM images WHERE id = $1 AND user_id = $2",
+      [id, userId]
+    );
+
+    return result.rowCount !== null && result.rowCount > 0;
+  },
 };

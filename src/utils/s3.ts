@@ -1,12 +1,12 @@
 import {
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "../config/env";
 import { randomUUID } from "node:crypto";
-import { buffer } from "node:stream/consumers";
 
 export const s3Client = new S3Client({
   region: env.AWS_REGION,
@@ -68,5 +68,19 @@ export const s3Service = {
       Key: key,
     });
     return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  },
+  deleteFromS3: async (key: string): Promise<void> => {
+    const command = new DeleteObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key,
+    });
+
+    try {
+      await s3Client.send(command);
+    } catch (error) {
+      throw new Error(
+        `Failed to delete from S3: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   },
 };

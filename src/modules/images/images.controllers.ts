@@ -2,6 +2,7 @@ import { Response, Request } from "express";
 import { uploadImage } from "./services/upload-image";
 import { getImages } from "./services/get-images";
 import { getImageById } from "./services/get-image-by-id";
+import { deleteImage } from "./services/delete-image";
 
 interface MulterRequest extends Express.Request {
   file?: Express.Multer.File;
@@ -31,6 +32,14 @@ export const imagesControllers = {
     return res.status(200).json({
       message: "Image retrieved successfully",
       data: image,
+    });
+  },
+
+  deleteImage: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    await deleteImage(req.userId!, id);
+    return res.status(200).json({
+      message: "Image deleted successfully",
     });
   },
 };

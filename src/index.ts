@@ -12,8 +12,8 @@ app.use(cors());
 app.use(logger);
 app.use(express.json());
 app.use(cookieParser());
-app.use(errorHandler);
 app.use("/api", routes);
+app.use(errorHandler);
 
 app.listen(env.PORT, () => {
   console.info(`Server is running on port ${env.PORT}`);
