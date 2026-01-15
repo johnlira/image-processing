@@ -6,6 +6,7 @@ const _env = z.object({
     .number()
     .min(1, ".env is invalid: PORT not defined")
     .default(3000),
+  FRONTEND_URL: z.string().min(1, ".env is invalid: FRONTEND_URL not defined"),
   DATABASE_URL: z.string().min(1, ".env is invalid: DATABASE_URL not defined"),
   JWT_SECRET: z.string().min(1, ".env is invalid: JWT_SECRET not defined"),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
@@ -36,7 +37,7 @@ function validateEnv() {
   if (!_parsed.success) {
     console.error(
       "Invalid environment variables",
-      treeifyError(_parsed.error).properties,
+      treeifyError(_parsed.error).properties
     );
     throw new Error("Invalid environment variables");
   }

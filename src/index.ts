@@ -8,8 +8,15 @@ import { env } from "./config/env";
 
 const app = express();
 
-app.use(cors());
 app.use(logger);
+app.use(
+  cors({
+    origin: env.FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", routes);
