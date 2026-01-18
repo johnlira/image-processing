@@ -109,4 +109,43 @@ export const imagesRepository = {
 
     return result.rowCount !== null && result.rowCount > 0;
   },
+
+  update: async (
+    id: string,
+    userId: string,
+    data: {
+      originalName: string;
+      mimeType: string;
+      size: number;
+      dimensions: { width: number; height: number; format: string };
+    }
+  ): Promise<ImageOutput> => {
+    const { originalName, mimeType, size, dimensions } = data;
+
+    const result = await pool.query(
+      `UPDATE images 
+       SET original_name = $1, mime_type = $2, size = $3, dimensions = $4
+       WHERE id = $5 AND user_id = $6
+       RETURNING id, user_id, original_name, storage_key, mime_type, size, dimensions, created_at`,
+      [originalName, mimeType, size, JSON.stringify(dimensions), id, userId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new AppError("Failed to update image", 500, "FAILED_TO_UPDATE_IMAGE");
+    }
+
+    return imageOutputSchema.parse({
+      id: result.rows[0].id,
+      userId: result.rows[0].user_id,
+      originalName: result.rows[0].original_name,
+      storageKey: result.rows[0].storage_key,
+      mimeType: result.rows[0].mime_type,
+      size: result.rows[0].size,
+      dimensions:
+        typeof result.rows[0].dimensions === "string"
+          ? JSON.parse(result.rows[0].dimensions)
+          : result.rows[0].dimensions,
+      createdAt: result.rows[0].created_at,
+    });
+  },
 };

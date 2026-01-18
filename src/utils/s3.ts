@@ -23,23 +23,26 @@ interface UploadToS3Params {
   mimetype: string;
   userId: string;
   originalName?: string;
+  storageKey?: string;
 }
 
 export const s3Service = {
   uploadToS3: async (params: UploadToS3Params) => {
-    const fileExtension = params.originalName?.split(".").pop() || "jpg";
-    const uniqueKey = `${params.userId}/${randomUUID()}.${fileExtension}`;
+    const storageKey = params.storageKey || (() => {
+      const fileExtension = params.originalName?.split(".").pop() || "jpg";
+      return `${params.userId}/${randomUUID()}.${fileExtension}`;
+    })();
 
     const command = new PutObjectCommand({
       Bucket: env.S3_BUCKET_NAME,
-      Key: uniqueKey,
+      Key: storageKey,
       Body: params.buffer,
       ContentType: params.mimetype,
     });
 
     try {
       await s3Client.send(command);
-      return uniqueKey;
+      return storageKey;
     } catch (error) {
       throw new Error(
         `Failed to upload to S3: ${error instanceof Error ? error.message : "Unknown error"}`,
